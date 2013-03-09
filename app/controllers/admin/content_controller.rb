@@ -13,7 +13,7 @@ class Admin::ContentController < Admin::BaseController
 
   def index
     @search = params[:search] ? params[:search] : {}
-    
+
     @articles = Article.search_with_pagination(@search, {:page => params[:page], :per_page => this_blog.admin_display_elements})
 
     if request.xhr?
@@ -112,6 +112,18 @@ class Admin::ContentController < Admin::BaseController
     end
     render :text => nil
   end
+
+### Merge
+  def merge
+    @source_article_id, @merge_with_article_id = params[:source_article], params[:merge_with]
+    @article = Article.find(@source_article_id).merge_with(@merge_with_article_id)
+    if @article.save
+      flash[:notice] = _("Article ##{@source_article_id} successfully merged with ##{@merge_with_article_id}!")
+      redirect_to :action => 'index'
+      return
+    end
+  end
+### Merge END
 
   protected
 

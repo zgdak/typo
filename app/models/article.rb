@@ -416,6 +416,24 @@ class Article < Content
     user.admin? || user_id == user.id
   end
 
+### Merge
+
+  def merge_with secondary_article_id
+    primary_article = self
+    secondary_article = Article.find(secondary_article_id)
+    @article = Article.get_or_build_article
+
+    @article.title = primary_article.title
+    @article.author = primary_article.author
+    @article.body = primary_article.body + secondary_article.body
+    @article.published_at = Time.now
+
+    @article
+  end
+
+## Merge END
+
+
   protected
 
   def set_published_at

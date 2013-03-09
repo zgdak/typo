@@ -425,7 +425,9 @@ class Article < Content
 
     @article.title = primary_article.title
     @article.author = primary_article.author
+    @article.text_filter_id = primary_article.text_filter_id
     @article.body = primary_article.body + secondary_article.body
+    @article.user_id = primary_article.user_id
     @article.published_at = Time.now
 
     @article

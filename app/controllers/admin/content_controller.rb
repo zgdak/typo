@@ -116,8 +116,14 @@ class Admin::ContentController < Admin::BaseController
 ### Merge
   def merge
     @source_article_id, @merge_with_article_id = params[:source_article], params[:merge_with]
-    @article = Article.find(@source_article_id).merge_with(@merge_with_article_id)
-    if @article.save
+    @merged_article = Article.find(@source_article_id).merge_with(@merge_with_article_id)
+    if @merged_article.save
+      @feedbacks = Feedback.where(:article_id => [@source_article_id, @merge_with_article_id])
+      @feedbacks.each do |f|
+        f.article_id = @merged_article.id
+        f.save
+      end
+      Article.destroy_all(:id => [@source_article_id, @merge_with_article_id])
       flash[:notice] = _("Article ##{@source_article_id} successfully merged with ##{@merge_with_article_id}!")
       redirect_to :action => 'index'
       return
